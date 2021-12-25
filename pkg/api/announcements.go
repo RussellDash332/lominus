@@ -5,6 +5,7 @@ import (
 )
 
 type Announcement struct {
+	Title       string // Announcement title
 	Description string // Announcement description
 	LastUpdated int64  // Announcement updated time
 }
@@ -22,7 +23,8 @@ func (req AnnouncementRequest) GetAnnouncements() ([]Announcement, error) {
 
 	for _, content := range rawResponse.Data {
 		if _, exists := content["access"]; exists {
-			desc := content["description"].(string)
+			title := content["title"].(string)
+			description := content["description"].(string)
 			lastUpdatedTime, err := time.Parse(time.RFC3339, content["lastUpdatedDate"].(string))
 			if err != nil {
 				return announcements, err
@@ -30,7 +32,8 @@ func (req AnnouncementRequest) GetAnnouncements() ([]Announcement, error) {
 			lastUpdated := lastUpdatedTime.Unix()
 
 			announcement := Announcement{
-				desc,
+				title,
+				description,
 				lastUpdated,
 			}
 			announcements = append(announcements, announcement)
