@@ -27,6 +27,11 @@ type GradeRequest struct {
 	Request Request
 }
 
+type AnnouncementRequest struct {
+	Module  Module
+	Request Request
+}
+
 type ModuleRequest struct {
 	Request Request
 }
@@ -65,6 +70,22 @@ func BuildGradeRequest(module Module) (GradeRequest, error) {
 		Module: module,
 		Request: Request{
 			Url:       fmt.Sprintf(GRADE_URL_ENDPOINT, module.Id),
+			JwtToken:  jwtToken,
+			UserAgent: USER_AGENT,
+		},
+	}, nil
+}
+
+func BuildAnnouncementRequest(module Module) (AnnouncementRequest, error) {
+	jwtToken, jwtTokenErr := retrieveJwtToken()
+	if jwtTokenErr != nil {
+		return AnnouncementRequest{}, jwtTokenErr
+	}
+
+	return AnnouncementRequest{
+		Module: module,
+		Request: Request{
+			Url:       fmt.Sprintf(ANNOUNCEMENT_URL_ENDPOINT, module.Id),
 			JwtToken:  jwtToken,
 			UserAgent: USER_AGENT,
 		},
