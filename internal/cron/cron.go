@@ -130,6 +130,7 @@ func createJob(rootSyncDirectory string, frequency int) (*gocron.Job, error) {
 
 		lmsFiles := []api.File{}
 		for _, module := range canvasModules {
+			logs.Logger.Debugf("Retrieving folders and files for %s", module.ModuleCode)
 			if !module.IsAccessible {
 				continue
 			}
@@ -143,11 +144,13 @@ func createJob(rootSyncDirectory string, frequency int) (*gocron.Job, error) {
 				logs.Logger.Warnln(moduleFolderReqErr)
 			}
 
+			logs.Logger.Debugf("Built moduleFolderReq for %s", moduleFolderReq.Module.ModuleCode)
 			moduleFolder, moduleFolderErr := moduleFolderReq.GetModuleFolder()
 			if moduleFolderErr != nil {
 				logs.Logger.Warnln(moduleFolderErr)
 			}
 
+			logs.Logger.Debugf("Retrieved moduleFolder %s for %s", moduleFolder.Name, module.ModuleCode)
 			foldersReq, foldersReqErr := api.BuildFoldersRequest(
 				canvasCredentials.CanvasApiToken,
 				constants.Canvas,
@@ -162,6 +165,7 @@ func createJob(rootSyncDirectory string, frequency int) (*gocron.Job, error) {
 				logs.Logger.Warnln(foldersErr)
 			}
 
+			logs.Logger.Debugf("Retrieved %d files from %s for %s", len(files), moduleFolder.Name, module.ModuleCode)
 			lmsFiles = append(lmsFiles, files...)
 		}
 
